@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07566f">
+    <title>FINTECH Connect 2026 | Control de asistencia</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <div class="encabezado-contenido">
+            <div class="logo-contenedor">
+                <!-- Coloca tu logo en imagenes/logo.png -->
+                <img src="imagenes/logo.png" alt="Logo FINTECH Connect"
+                    class="logo" onerror="this.style.display='none'">
+
+                <div class="marca">
+                    <h1>FINTECH <span>CONNECT</span></h1>
+                    <p>2026 · CONTROL DE ASISTENCIA</p>
+                </div>
+            </div>
+
+            <div class="estado-evento">
+                <span class="punto-estado"></span>
+                <span>Registro del evento</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="contenedor-principal">
+
+        <section class="introduccion">
+            <p class="etiqueta-superior">PANEL DE ORGANIZACIÓN</p>
+            <h2>Control de asistentes</h2>
+            <p>Selecciona una opción para gestionar el registro del evento.</p>
+        </section>
+
+        <nav class="navegacion" aria-label="Secciones de asistencia">
+            <button class="nav-boton activo" data-seccion="registro"
+                aria-controls="seccion-registro" aria-selected="true">
+                <span class="nav-icono">01</span>
+                <span>REGISTRO</span>
+            </button>
+
+            <button class="nav-boton" data-seccion="camara"
+                aria-controls="seccion-camara" aria-selected="false">
+                <span class="nav-icono">02</span>
+                <span>CÁMARA QR</span>
+            </button>
+
+            <button class="nav-boton" data-seccion="nuevo"
+                aria-controls="seccion-nuevo" aria-selected="false">
+                <span class="nav-icono">03</span>
+                <span>NUEVO REGISTRO</span>
+            </button>
+        </nav>
+
+        <!-- SECCIÓN 1: BÚSQUEDA -->
+        <section id="seccion-registro" class="panel seccion activa">
+            <div class="panel-cabecera">
+                <div>
+                    <span class="numero-seccion">SECCIÓN 01</span>
+                    <h3>Buscar participante</h3>
+                    <p>Encuentra a una persona inscrita en el evento.</p>
+                </div>
+                <div class="icono-panel">⌕</div>
+            </div>
+
+            <form id="form-busqueda" class="formulario-busqueda">
+                <label for="busqueda">Nombre, institución o número de celular</label>
+
+                <div class="busqueda-fila">
+                    <div class="campo-busqueda">
+                        <span class="lupa" aria-hidden="true">⌕</span>
+                        <input type="search" id="busqueda"
+                            placeholder="Escribe el dato que deseas buscar..."
+                            autocomplete="off">
+                    </div>
+
+                    <button type="submit" class="boton boton-principal">
+                        BUSCAR
+                    </button>
+                </div>
+            </form>
+
+            <div id="resultado-busqueda" class="mensaje-vacio" aria-live="polite">
+                <div class="icono-vacio">⌕</div>
+                <p class="mensaje-titulo">Busca un participante</p>
+                <p>Los resultados aparecerán aquí cuando conectemos el sistema.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CÁMARA QR -->
+        <section id="seccion-camara" class="panel seccion" hidden>
+            <div class="panel-cabecera">
+                <div>
+                    <span class="numero-seccion">SECCIÓN 02</span>
+                    <h3>Escanear código QR</h3>
+                    <p>Activa la cámara para preparar el escaneo del participante.</p>
+                </div>
+                <div class="icono-panel">▦</div>
+            </div>
+
+            <div class="camara-contenedor">
+                <div id="visor-camara" class="visor-camara">
+                    <video id="video-camara" autoplay playsinline muted></video>
+
+                    <div id="mensaje-camara" class="mensaje-camara">
+                        <div class="icono-camara">▣</div>
+                        <p class="mensaje-titulo">Cámara desactivada</p>
+                        <p>Al activar la cámara, la imagen aparecerá en esta área.</p>
+                    </div>
+
+                    <div class="marco-escaneo" aria-hidden="true">
+                        <span class="esquina superior-izquierda"></span>
+                        <span class="esquina superior-derecha"></span>
+                        <span class="esquina inferior-izquierda"></span>
+                        <span class="esquina inferior-derecha"></span>
+                    </div>
+                </div>
+
+                <p id="estado-camara" class="texto-estado-camara" aria-live="polite">
+                    La cámara todavía no está activada.
+                </p>
+
+                <div class="acciones-camara">
+                    <button type="button" id="btn-activar-camara"
+                        class="boton boton-principal">
+                        ACTIVAR CÁMARA
+                    </button>
+
+                    <button type="button" id="btn-detener-camara"
+                        class="boton boton-secundario" disabled>
+                        DETENER CÁMARA
+                    </button>
+                </div>
+
+                <p class="nota-camara">
+                    El escaneo y la validación de los códigos QR se implementarán
+                    en la siguiente etapa.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: NUEVO REGISTRO -->
+        <section id="seccion-nuevo" class="panel seccion" hidden>
+            <div class="panel-cabecera">
+                <div>
+                    <span class="numero-seccion">SECCIÓN 03</span>
+                    <h3>Nuevo participante</h3>
+                    <p>Completa los datos de la persona que se registra en el evento.</p>
+                </div>
+                <div class="icono-panel">＋</div>
+            </div>
+
+            <form id="form-nuevo-registro" class="formulario">
+                <div class="campo">
+                    <label for="nombre">Nombre completo <span>*</span></label>
+                    <input type="text" id="nombre" name="nombre"
+                        placeholder="Ej. Juan Pérez López"
+                        autocomplete="name" required>
+                </div>
+
+                <div class="campo">
+                    <label for="institucion">Institución <span>*</span></label>
+                    <input type="text" id="institucion" name="institucion"
+                        placeholder="Nombre de la institución"
+                        autocomplete="organization" required>
+                </div>
+
+                <div class="campo">
+                    <label for="correo">Correo electrónico <span>*</span></label>
+                    <input type="email" id="correo" name="correo"
+                        placeholder="ejemplo@correo.com"
+                        autocomplete="email" required>
+                </div>
+
+                <div class="campo">
+                    <label for="celular">Número de celular <span>*</span></label>
+                    <input type="tel" id="celular" name="celular"
+                        placeholder="Introduce el número de celular"
+                        autocomplete="tel" required>
+                </div>
+
+                <p class="nota-formulario">
+                    Todos los campos son obligatorios.
+                </p>
+
+                <button type="submit" class="boton boton-principal boton-enviar">
+                    REGISTRAR PARTICIPANTE
+                </button>
+
+                <div id="mensaje-registro" class="mensaje-formulario"
+                    aria-live="polite"></div>
+            </form>
+        </section>
+
+        <footer class="pie-pagina">
+            <p>FINTECH CONNECT 2026</p>
+            <span>Panel de control de asistencia</span>
+        </footer>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
