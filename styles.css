@@ -1,5 +1,5 @@
 :root {
-    --color-principal: #07566f;
+    --color-principal: #00132e;
     --color-principal-oscuro: #064456;
     --color-secundario: #13849a;
     --color-fondo: #f3f6f8;
@@ -44,8 +44,8 @@ input:focus-visible {
     outline-offset: 2px;
 }
 
-/* FRANJA SUPERIOR */
 
+/* FRANJA SUPERIOR */
 .encabezado {
     width: 100%;
     background: var(--color-principal);
@@ -54,28 +54,40 @@ input:focus-visible {
 }
 
 .encabezado-contenido {
-    width: min(1160px, 92%);
-    min-height: 94px;
+    width: 100%;
+    min-height: 140px;
     margin: 0 auto;
+    padding: 20px 0;
+
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 14px 0;
+    justify-content: center;
+    text-align: center;
 }
 
+/* LOGO CENTRADO */
 .logo-contenedor {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    min-width: 0;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
 }
 
 .logo {
-    width: 58px;
-    height: 58px;
+    display: block;
+    width: 75px;
+    height: 75px;
     object-fit: contain;
-    flex-shrink: 0;
+    margin: 0 auto;
+}
+
+/* TEXTO DEBAJO DEL LOGO */
+.marca {
+    width: 100%;
+    text-align: center;
 }
 
 .marca h1 {
@@ -95,7 +107,14 @@ input:focus-visible {
     color: rgba(255, 255, 255, 0.78);
     font-size: 10px;
     letter-spacing: 1.4px;
+    text-align: center;
 }
+
+/* OCULTAR EL INDICADOR LATERAL, SI TODAVÍA EXISTE */
+.estado-evento {
+    display: none;
+}
+
 
 .estado-evento {
     display: flex;
@@ -402,15 +421,17 @@ input:focus-visible {
     background: #12232b;
 }
 
-#video-camara {
-    display: none;
+/* LECTOR QR */
+
+#lector-qr {
     width: 100%;
     height: 100%;
-    object-fit: cover;
 }
 
-#video-camara.visible {
-    display: block;
+#lector-qr video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
 }
 
 .mensaje-camara {
@@ -718,5 +739,356 @@ input:focus-visible {
 
     .acciones-camara .boton {
         width: 100%;
+    }
+}
+
+
+/* ========================================
+   VENTANA EMERGENTE DE CONFIRMACIÓN
+======================================== */
+
+.modal-confirmacion {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    overflow-y: auto;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+/* Estado visible de la ventana */
+
+.modal-confirmacion.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Fondo oscuro detrás de la ventana */
+
+.modal-confirmacion-fondo {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 19, 46, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Contenido principal */
+
+.modal-confirmacion-contenido {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+
+    padding: 30px;
+    border: 1px solid var(--color-borde);
+    border-radius: 18px;
+
+    background: var(--color-blanco);
+    box-shadow: 0 20px 60px rgba(0, 19, 46, 0.25);
+
+    text-align: center;
+
+    transform: translateY(15px) scale(0.98);
+    transition: transform 0.25s ease;
+}
+
+.modal-confirmacion.visible .modal-confirmacion-contenido {
+    transform: translateY(0) scale(1);
+}
+
+/* Icono superior */
+
+.modal-confirmacion-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 18px;
+
+    border: 1px solid #b9dce3;
+    border-radius: 50%;
+
+    background: var(--color-suave);
+    color: var(--color-secundario);
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+/* Etiqueta y título */
+
+.modal-confirmacion-etiqueta {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--color-secundario);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.modal-confirmacion-contenido h2 {
+    margin: 0 0 10px;
+
+    color: var(--color-principal);
+    font-size: clamp(21px, 4vw, 26px);
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+}
+
+#descripcion-confirmacion {
+    margin: 0 auto 22px;
+    max-width: 320px;
+
+    color: var(--color-texto-secundario);
+    font-size: 13px;
+}
+
+/* Tarjeta del participante */
+
+.modal-confirmacion-participante {
+    padding: 17px;
+    margin-bottom: 12px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+
+    background: #fbfcfd;
+    text-align: left;
+}
+
+.modal-confirmacion-participante span,
+.modal-confirmacion-accion span {
+    display: block;
+    margin-bottom: 7px;
+
+    color: var(--color-texto-secundario);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.modal-confirmacion-participante strong {
+    display: block;
+
+    color: var(--color-principal);
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.modal-confirmacion-participante p {
+    margin: 5px 0 0;
+
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* Acción que se va a ejecutar */
+
+.modal-confirmacion-accion {
+    padding: 15px 17px;
+    margin-bottom: 16px;
+
+    border: 1px solid #b9dce3;
+    border-radius: 12px;
+
+    background: var(--color-suave);
+    text-align: left;
+}
+
+.modal-confirmacion-accion strong {
+    display: block;
+
+    color: var(--color-principal);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* Advertencia */
+
+.modal-confirmacion-advertencia {
+    margin: 0 0 22px;
+
+    color: var(--color-texto-secundario);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Botones de confirmación */
+
+.modal-confirmacion-botones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.modal-confirmacion-botones .boton {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 10px;
+}
+
+.modal-confirmacion-botones #btn-confirmar-accion {
+    background: var(--color-secundario);
+}
+
+.modal-confirmacion-botones #btn-confirmar-accion:hover:not(:disabled) {
+    background: var(--color-principal-oscuro);
+}
+
+/* Mensajes de respuesta */
+
+.mensaje-confirmacion {
+    margin: 14px 0 0;
+
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.mensaje-confirmacion:empty {
+    display: none;
+}
+
+/* Adaptación a celulares */
+
+@media (max-width: 480px) {
+    .modal-confirmacion {
+        padding: 14px;
+    }
+
+    .modal-confirmacion-contenido {
+        max-width: 100%;
+        max-height: calc(100vh - 28px);
+        padding: 24px 19px;
+        border-radius: 15px;
+    }
+
+    .modal-confirmacion-icono {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    .modal-confirmacion-participante {
+        padding: 14px;
+    }
+
+    .modal-confirmacion-accion {
+        padding: 13px 14px;
+    }
+
+    .modal-confirmacion-botones {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-confirmacion-botones .boton {
+        min-height: 48px;
+    }
+}
+
+/* Respeto a la preferencia de movimiento reducido */
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-confirmacion,
+    .modal-confirmacion-contenido {
+        transition: none;
+    }
+}
+
+
+/* ========================================
+   TARJETAS DE RESULTADOS DE BÚSQUEDA
+======================================== */
+
+#resultado-busqueda {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#resultado-busqueda > .mensaje-titulo {
+    margin: 8px 0 4px;
+}
+
+.resultado-participante {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 18px;
+    border: 2px solid #064456;
+    border-radius: 14px;
+    background: var(--color-blanco);
+    box-shadow: var(--sombra);
+
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.resultado-participante:hover {
+    border-color: var(--color-secundario);
+    box-shadow: 0 6px 20px rgba(18, 49, 62, 0.10);
+}
+
+.resultado-participante h3 {
+    margin: 0 0 3px;
+    color: var(--color-principal);
+    font-size: 16px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.resultado-participante p {
+    margin: 0;
+    color: var(--color-texto-secundario);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.resultado-participante .boton {
+    width: 100%;
+    margin-top: 7px;
+}
+
+.resultado-participante .boton:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .resultado-participante {
+        padding: 15px;
+        border-radius: 12px;
+        gap: 8px;
+    }
+
+    .resultado-participante h3 {
+        font-size: 15px;
     }
 }

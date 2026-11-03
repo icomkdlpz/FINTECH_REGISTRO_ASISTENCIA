@@ -21,17 +21,8 @@
                 <!-- Coloca tu logo en imagenes/logo.png -->
                 <img src="imagenes/logo.png" alt="Logo FINTECH Connect"
                     class="logo" onerror="this.style.display='none'">
-
-                <div class="marca">
-                    <h1>FINTECH <span>CONNECT</span></h1>
-                    <p>2026 · CONTROL DE ASISTENCIA</p>
-                </div>
             </div>
 
-            <div class="estado-evento">
-                <span class="punto-estado"></span>
-                <span>Registro del evento</span>
-            </div>
         </div>
     </header>
 
@@ -111,7 +102,7 @@
 
             <div class="camara-contenedor">
                 <div id="visor-camara" class="visor-camara">
-                    <video id="video-camara" autoplay playsinline muted></video>
+                    <div id="lector-qr"></div>
 
                     <div id="mensaje-camara" class="mensaje-camara">
                         <div class="icono-camara">▣</div>
@@ -210,7 +201,69 @@
 
     </main>
 
+    <!-- VENTANA EMERGENTE DE CONFIRMACIÓN -->
+    <div id="modal-confirmacion" class="modal-confirmacion"
+        aria-hidden="true">
+
+        <div class="modal-confirmacion-fondo"></div>
+
+        <div class="modal-confirmacion-contenido"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-confirmacion"
+            aria-describedby="descripcion-confirmacion">
+
+            <div id="icono-confirmacion" class="modal-confirmacion-icono">
+                !
+            </div>
+
+            <span class="modal-confirmacion-etiqueta">
+                VERIFICACIÓN DE ASISTENCIA
+            </span>
+
+            <h2 id="titulo-confirmacion">
+                Confirmar acción
+            </h2>
+
+            <p id="descripcion-confirmacion">
+                Revisa los datos antes de continuar.
+            </p>
+
+            <div class="modal-confirmacion-participante">
+                <span>PARTICIPANTE</span>
+                <strong id="confirmacion-nombre">Nombre del participante</strong>
+                <p id="confirmacion-institucion">Institución</p>
+            </div>
+
+            <div class="modal-confirmacion-accion">
+                <span>ACCIÓN SOLICITADA</span>
+                <strong id="confirmacion-accion">Registrar entrada</strong>
+            </div>
+
+            <p class="modal-confirmacion-advertencia">
+                Verifica que seleccionaste a la persona correcta antes
+                de confirmar el registro.
+            </p>
+
+            <div class="modal-confirmacion-botones">
+                <button type="button" id="btn-cancelar-confirmacion"
+                    class="boton boton-secundario">
+                    CANCELAR
+                </button>
+
+                <button type="button" id="btn-confirmar-accion"
+                    class="boton boton-principal">
+                    CONFIRMAR
+                </button>
+            </div>
+
+            <p id="mensaje-confirmacion" class="mensaje-confirmacion"
+                aria-live="polite"></p>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
