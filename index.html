@@ -139,6 +139,45 @@
                     en la siguiente etapa.
                 </p>
             </div>
+            <!-- VENTANA INFORMATIVA DEL PARTICIPANTE QR -->
+            <div id="resultado-qr" class="resultado-qr" hidden>
+
+              <div class="resultado-qr-cabecera">
+                <span class="numero-seccion">PARTICIPANTE IDENTIFICADO</span>
+                <h3>Información de asistencia</h3>
+              </div>
+
+             <div class="resultado-qr-datos">
+
+               <div class="dato-qr">
+               <span>Nombre completo</span>
+               <p id="qr-nombre">---</p>
+             </div>
+
+             <div class="dato-qr">
+              <span>Institución</span>
+              <p id="qr-institucion">---</p>
+             </div>
+
+             <div class="dato-qr">
+              <span>Estado de asistencia</span>
+              <p id="qr-estado-asistencia">---</p>
+             </div>
+
+             </div>
+
+         <p id="qr-mensaje" class="qr-mensaje" aria-live="polite"></p>
+
+         <button
+          type="button"
+          id="btn-accion-qr"
+          class="boton boton-principal"
+          disabled>
+          ESPERANDO PARTICIPANTE
+         </button>
+
+        </div>
+
         </section>
 
         <!-- SECCIÓN 3: NUEVO REGISTRO -->

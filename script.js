@@ -752,9 +752,90 @@ async function detenerCamara() {
     }
 }
 
+
+// MOSTRAR INFORMACIÓN DEL PARTICIPANTE IDENTIFICADO POR QR
+function mostrarResultadoQR(participante) {
+    const contenedor = document.getElementById("resultado-qr");
+    const nombre = document.getElementById("qr-nombre");
+    const institucion = document.getElementById("qr-institucion");
+    const estado = document.getElementById("qr-estado-asistencia");
+    const mensaje = document.getElementById("qr-mensaje");
+    const boton = document.getElementById("btn-accion-qr");
+
+    if (
+        !contenedor ||
+        !nombre ||
+        !institucion ||
+        !estado ||
+        !mensaje ||
+        !boton
+    ) {
+        console.error("Faltan elementos de la ventana informativa QR.");
+        return;
+    }
+
+    nombre.textContent = participante.nombre || "Sin nombre";
+    institucion.textContent =
+        participante.institucion || "Institución no registrada";
+
+    const estadoActual = (participante.estadoAsistencia || "")
+        .trim()
+        .toLowerCase();
+
+    // Determinar automáticamente la acción correspondiente.
+    if (estadoActual === "pendiente") {
+        estado.textContent = "Pendiente de ingreso";
+        mensaje.textContent =
+            "El participante todavía no ha registrado su ingreso.";
+
+        boton.textContent = "REGISTRAR INGRESO";
+        boton.disabled = false;
+        boton.onclick = () => {
+            abrirConfirmacion(participante, "registrarEntrada");
+        };
+
+    } else if (estadoActual === "ingresó" || estadoActual === "ingreso") {
+        estado.textContent = "Ingreso registrado";
+        mensaje.textContent =
+            "El participante ya registró su ingreso al evento.";
+
+        boton.textContent = "REGISTRAR SALIDA";
+        boton.disabled = false;
+        boton.onclick = () => {
+            abrirConfirmacion(participante, "registrarSalida");
+        };
+
+    } else if (estadoActual === "salió" || estadoActual === "salida") {
+        estado.textContent = "Asistencia completa";
+        mensaje.textContent =
+            "El participante ya registró su ingreso y salida.";
+
+        boton.textContent = "ASISTENCIA COMPLETA";
+        boton.disabled = true;
+        boton.onclick = null;
+
+    } else {
+        estado.textContent = "Estado no reconocido";
+        mensaje.textContent =
+            "No se puede determinar la acción correspondiente. Verifica el registro.";
+
+        boton.textContent = "ESTADO NO DISPONIBLE";
+        boton.disabled = true;
+        boton.onclick = null;
+    }
+
+    contenedor.hidden = false;
+}
+
 // PROCESAR EL QR Y BUSCAR AL PARTICIPANTE
 async function procesarQR(token) {
     const estado = document.getElementById("estado-camara");
+    const contenedor = document.getElementById("resultado-qr");
+
+    // Ocultar información de un escaneo anterior.
+    if (contenedor) {
+        contenedor.hidden = true;
+    }
 
     // Detener la cámara después de leer el código.
     await detenerCamara();
@@ -781,6 +862,9 @@ async function procesarQR(token) {
         const participante = respuesta.participante;
 
         console.log("FINTECH: participante identificado:", participante);
+
+        // Mostrar información y acción correspondiente.
+        mostrarResultadoQR(participante);
 
         estado.textContent =
             "Participante identificado: " + participante.nombre;
