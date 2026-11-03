@@ -201,6 +201,62 @@ function consultarParticipantes(consulta) {
     });
 }
 
+// CONSULTA DE PARTICIPANTE MEDIANTE TOKEN QR
+function consultarParticipantePorQR(token) {
+    return new Promise((resolve, reject) => {
+        const nombreCallback =
+            "fintechQRCallback_" +
+            Date.now() +
+            "_" +
+            Math.floor(Math.random() * 100000);
+
+        const script = document.createElement("script");
+
+        const parametros = new URLSearchParams({
+            accion: "buscarPorQR",
+            token: token,
+            callback: nombreCallback
+        });
+
+        let finalizado = false;
+
+        const limpiar = () => {
+            clearTimeout(temporizador);
+            script.remove();
+            delete window[nombreCallback];
+        };
+
+        const temporizador = setTimeout(() => {
+            if (finalizado) return;
+
+            finalizado = true;
+            limpiar();
+
+            reject(new Error("La consulta del QR tardó demasiado."));
+        }, 15000);
+
+        window[nombreCallback] = (respuesta) => {
+            if (finalizado) return;
+
+            finalizado = true;
+            limpiar();
+            resolve(respuesta);
+        };
+
+        script.onerror = () => {
+            if (finalizado) return;
+
+            finalizado = true;
+            limpiar();
+
+            reject(new Error("No se pudo conectar con Apps Script."));
+        };
+
+        script.src = URL_APPS_SCRIPT + "?" + parametros.toString();
+        document.head.appendChild(script);
+    });
+}
+
 // ========================================
 // MOSTRAR RESULTADOS
 // ========================================
@@ -626,18 +682,14 @@ async function activarCamara() {
                 aspectRatio: 4 / 3
             },
 
-            // Se ejecuta cuando se detecta un QR
             (textoQR) => {
-                if (qrDetectado) return;
+              if (qrDetectado) return;
 
-                qrDetectado = true;
+              qrDetectado = true;
 
-                console.log("FINTECH: código QR detectado:", textoQR);
+              console.log("FINTECH: código QR detectado:", textoQR);
 
-                estado.textContent =
-                    "Código QR leído correctamente. Revisa la consola.";
-
-                detenerCamara();
+              procesarQR(textoQR);
             },
 
             // Errores normales mientras busca un código
@@ -697,6 +749,47 @@ async function detenerCamara() {
 
     if (estado && !qrDetectado) {
         estado.textContent = "La cámara está desactivada.";
+    }
+}
+
+// PROCESAR EL QR Y BUSCAR AL PARTICIPANTE
+async function procesarQR(token) {
+    const estado = document.getElementById("estado-camara");
+
+    // Detener la cámara después de leer el código.
+    await detenerCamara();
+
+    estado.textContent = "Consultando participante...";
+
+    try {
+        const respuesta = await consultarParticipantePorQR(token);
+
+        console.log("FINTECH: respuesta de Apps Script:", respuesta);
+
+        if (!respuesta || respuesta.ok !== true) {
+            throw new Error(
+                respuesta?.mensaje || "No se pudo consultar el participante."
+            );
+        }
+
+        if (!respuesta.encontrado || !respuesta.participante) {
+            estado.textContent =
+                "El código QR no corresponde a ningún participante registrado.";
+            return;
+        }
+
+        const participante = respuesta.participante;
+
+        console.log("FINTECH: participante identificado:", participante);
+
+        estado.textContent =
+            "Participante identificado: " + participante.nombre;
+
+    } catch (error) {
+        console.error("Error al consultar el QR:", error);
+
+        estado.textContent =
+            error.message || "Ocurrió un error al consultar el participante.";
     }
 }
 
