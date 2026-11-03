@@ -555,6 +555,20 @@ async function confirmarAccion() {
 
         botonConfirmar.textContent = "REGISTRADO";
 
+        // Actualizar la información de la ventana QR.
+        if (
+        participantePendiente &&
+        document.getElementById("resultado-qr") &&
+        !document.getElementById("resultado-qr").hidden
+        ) {
+       const participanteActualizado = {
+        ...participantePendiente,
+        estadoAsistencia: respuesta.estadoAsistencia
+        };
+
+        mostrarResultadoQR(participanteActualizado);
+        }
+
         const icono = document.getElementById("icono-confirmacion");
 
         if (icono) {
