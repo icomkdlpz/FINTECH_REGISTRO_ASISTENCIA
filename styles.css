@@ -1092,3 +1092,28 @@ input:focus-visible {
         font-size: 15px;
     }
 }
+
+/* RESULTADO DEL ESCANEO QR */
+
+#resultado-qr {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+#resultado-qr[hidden] {
+    display: none;
+}
+
+#resultado-qr .resultado-participante {
+    margin: 0;
+}
+
+#resultado-qr .qr-mensaje {
+    margin: 0;
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+}

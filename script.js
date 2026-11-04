@@ -767,12 +767,14 @@ async function detenerCamara() {
 }
 
 
-// MOSTRAR INFORMACIÓN DEL PARTICIPANTE IDENTIFICADO POR QR
+
+ // MOSTRAR INFORMACIÓN DEL PARTICIPANTE IDENTIFICADO POR QR
 function mostrarResultadoQR(participante) {
     const contenedor = document.getElementById("resultado-qr");
     const nombre = document.getElementById("qr-nombre");
     const institucion = document.getElementById("qr-institucion");
     const estado = document.getElementById("qr-estado-asistencia");
+    const horaIngreso = document.getElementById("qr-hora-ingreso");
     const mensaje = document.getElementById("qr-mensaje");
     const boton = document.getElementById("btn-accion-qr");
 
@@ -781,6 +783,7 @@ function mostrarResultadoQR(participante) {
         !nombre ||
         !institucion ||
         !estado ||
+        !horaIngreso ||
         !mensaje ||
         !boton
     ) {
@@ -789,27 +792,34 @@ function mostrarResultadoQR(participante) {
     }
 
     nombre.textContent = participante.nombre || "Sin nombre";
+
     institucion.textContent =
-        participante.institucion || "Institución no registrada";
+        "Institución: " +
+        (participante.institucion || "No registrada");
+
+    estado.textContent =
+        "Asistencia: " +
+        (participante.estadoAsistencia || "Pendiente");
+
+    horaIngreso.textContent = participante.fechaIngreso
+        ? "Hora de ingreso: " + participante.fechaIngreso
+        : "Hora de ingreso: Pendiente de ingreso";
 
     const estadoActual = (participante.estadoAsistencia || "")
         .trim()
         .toLowerCase();
 
-    // Determinar automáticamente la acción correspondiente.
     if (estadoActual === "pendiente") {
-        estado.textContent = "Pendiente de ingreso";
         mensaje.textContent =
             "El participante todavía no ha registrado su ingreso.";
 
-        boton.textContent = "REGISTRAR INGRESO";
+        boton.textContent = "REGISTRAR ENTRADA";
         boton.disabled = false;
         boton.onclick = () => {
             abrirConfirmacion(participante, "registrarEntrada");
         };
 
-    } else if (estadoActual === "ingresó" || estadoActual === "ingreso") {
-        estado.textContent = "Ingreso registrado";
+    } else if (estadoActual === "ingresó") {
         mensaje.textContent =
             "El participante ya registró su ingreso al evento.";
 
@@ -819,19 +829,17 @@ function mostrarResultadoQR(participante) {
             abrirConfirmacion(participante, "registrarSalida");
         };
 
-    } else if (estadoActual === "salió" || estadoActual === "salida") {
-        estado.textContent = "Asistencia completa";
+    } else if (estadoActual === "salió") {
         mensaje.textContent =
-            "El participante ya registró su ingreso y salida.";
+            "El participante ya completó su asistencia.";
 
         boton.textContent = "ASISTENCIA COMPLETA";
         boton.disabled = true;
         boton.onclick = null;
 
     } else {
-        estado.textContent = "Estado no reconocido";
         mensaje.textContent =
-            "No se puede determinar la acción correspondiente. Verifica el registro.";
+            "No se reconoce el estado de asistencia.";
 
         boton.textContent = "ESTADO NO DISPONIBLE";
         boton.disabled = true;
@@ -840,6 +848,7 @@ function mostrarResultadoQR(participante) {
 
     contenedor.hidden = false;
 }
+
 
 // PROCESAR EL QR Y BUSCAR AL PARTICIPANTE
 async function procesarQR(token) {
