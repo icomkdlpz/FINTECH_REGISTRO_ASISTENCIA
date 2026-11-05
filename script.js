@@ -614,10 +614,10 @@ async function confirmarAccion() {
 
 // ========================================
 // FORMULARIO DE NUEVO REGISTRO
-// Todavía no guarda en Google Sheets.
 // ========================================
 
 function configurarFormulario() {
+
     const formulario = document.getElementById("form-nuevo-registro");
     const mensaje = document.getElementById("mensaje-registro");
 
@@ -626,22 +626,95 @@ function configurarFormulario() {
         return;
     }
 
-    formulario.addEventListener("submit", (evento) => {
+    const botonEnviar = formulario.querySelector(
+        'button[type="submit"]'
+    );
+
+    formulario.addEventListener("submit", async (evento) => {
+
         evento.preventDefault();
 
         if (!formulario.reportValidity()) {
             return;
         }
 
-        mensaje.textContent =
-            "Formulario preparado. La conexión para guardar los datos se implementará en la siguiente etapa.";
+        // Evitar envíos repetidos.
+        if (botonEnviar.disabled) {
+            return;
+        }
+
+        // Obtener los datos del formulario.
+        const datos = {
+            accion: "registrarNuevoParticipante",
+            nombre: document.getElementById("nombre").value.trim(),
+            institucion: document.getElementById("institucion").value.trim(),
+            correo: document.getElementById("correo").value.trim(),
+            celular: document.getElementById("celular").value.trim()
+        };
+
+        // Mostrar estado de procesamiento.
+        botonEnviar.disabled = true;
+        botonEnviar.textContent = "REGISTRANDO...";
+
+        mensaje.className = "mensaje-formulario";
+        mensaje.textContent = "Registrando participante. Por favor, espera...";
+
+        try {
+
+            const respuesta = await solicitarAppsScript(datos);
+
+            if (!respuesta.ok) {
+
+                mensaje.className = "mensaje-formulario error";
+                mensaje.textContent =
+                    respuesta.mensaje ||
+                    "No se pudo registrar al participante.";
+
+                return;
+            }
+
+            // Registro completado.
+            formulario.reset();
+
+            if (respuesta.correoEnviado) {
+
+                mensaje.className = "mensaje-formulario exito";
+                mensaje.textContent = respuesta.mensaje;
+
+            } else {
+
+                mensaje.className = "mensaje-formulario advertencia";
+                mensaje.textContent = respuesta.mensaje;
+
+            }
+
+        } catch (error) {
+
+            console.error("Error al registrar participante:", error);
+
+            mensaje.className = "mensaje-formulario error";
+            mensaje.textContent =
+                "No se pudo establecer comunicación con el servidor. " +
+                "Verifica la conexión e inténtalo nuevamente.";
+
+        } finally {
+
+            botonEnviar.disabled = false;
+            botonEnviar.textContent = "REGISTRAR PARTICIPANTE";
+
+        }
+
     });
 
+    // Limpiar el mensaje cuando se modifiquen los campos.
     formulario.addEventListener("input", () => {
-        mensaje.textContent = "";
-    });
-}
 
+        mensaje.textContent = "";
+        mensaje.className = "mensaje-formulario";
+
+    });
+
+}
 
 // =========================================
 // CÁMARA Y LECTOR QR
