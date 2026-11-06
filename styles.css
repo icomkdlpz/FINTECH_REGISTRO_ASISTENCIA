@@ -1117,3 +1117,57 @@ input:focus-visible {
     line-height: 1.5;
     text-align: center;
 }
+
+/* =========================================
+   2. PANTALLA DE CARGA INICIAL
+========================================= */
+
+#pantalla-carga {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+
+    margin: 0;
+    padding: 0;
+
+    background-color: #000000;
+
+    opacity: 1;
+    pointer-events: auto;
+
+    transition: opacity 0.6s ease;
+}
+
+#pantalla-carga.ocultar {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.logo-carga {
+    display: block;
+
+    width: auto;
+    height: 20vh;
+    max-width: 75vw;
+    object-fit: contain;
+
+    animation: latido 1.5s ease-in-out infinite;
+}
+
+@keyframes latido {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
