@@ -19,6 +19,7 @@ function iniciarPagina() {
     configurarFormulario();
     configurarCamara();
     configurarModalConfirmacion();
+    configurarDashboard();
 }
 
 // ==========================================
@@ -617,6 +618,9 @@ async function confirmarAccion() {
                 errorBusqueda
             );
         }
+               
+        // Actualizar estadísticas si el dashboard está abierto.
+        await actualizarDashboardSiVisible();
 
     } catch (error) {
         console.error("Error al registrar asistencia:", error);
@@ -717,6 +721,9 @@ function configurarFormulario() {
                 mensaje.textContent = respuesta.mensaje;
 
             }
+                        
+            // Actualizar estadísticas si el dashboard está abierto.
+            await actualizarDashboardSiVisible();
 
         } catch (error) {
 
@@ -1005,3 +1012,238 @@ async function procesarQR(token) {
 
 // Apagar la cámara al abandonar la sección o cerrar la página.
 window.addEventListener("pagehide", detenerCamara);
+
+// =========================================
+// DASHBOARD DE ASISTENCIA
+// =========================================
+
+// CONFIGURAR BOTÓN DE ACCESO
+
+function configurarDashboard() {
+    const boton = document.getElementById("btn-dashboard");
+    const dashboard = document.getElementById("seccion-dashboard");
+
+    if (!boton || !dashboard) {
+        console.warn("No se encontraron los elementos del dashboard.");
+        return;
+    }
+
+    // El dashboard inicia oculto.
+    dashboard.hidden = true;
+
+    boton.addEventListener("click", async () => {
+        const mostrar = dashboard.hidden;
+
+        dashboard.hidden = !mostrar;
+
+        boton.setAttribute("aria-expanded", String(mostrar));
+
+        boton.setAttribute(
+            "aria-label",
+            mostrar ? "Cerrar dashboard de asistencia" : "Abrir dashboard de asistencia"
+        );
+
+        boton.title = mostrar
+            ? "Cerrar dashboard de asistencia"
+            : "Dashboard de asistencia";
+
+        // Consultar los datos cada vez que se abre.
+        if (mostrar) {
+            await cargarEstadisticasDashboard();
+        }
+    });
+}
+
+
+// CONSULTAR ESTADÍSTICAS EN GOOGLE APPS SCRIPT
+
+async function cargarEstadisticasDashboard() {
+    const dashboard = document.getElementById("seccion-dashboard");
+
+    const totalElemento = document.getElementById("dashboard-total");
+    const pendientesElemento = document.getElementById("dashboard-pendientes");
+    const ingresaronElemento = document.getElementById("dashboard-ingresaron");
+    const salieronElemento = document.getElementById("dashboard-salieron");
+    const porcentajeElemento = document.getElementById("medidor-porcentaje");
+
+    if (
+        !dashboard ||
+        !totalElemento ||
+        !pendientesElemento ||
+        !ingresaronElemento ||
+        !salieronElemento ||
+        !porcentajeElemento
+    ) {
+        console.error("Faltan elementos HTML del dashboard.");
+        return;
+    }
+
+    mostrarMensajeDashboard("Actualizando estadísticas...");
+
+    try {
+        const respuesta = await solicitarAppsScript({
+            accion: "estadisticas"
+        });
+
+        if (!respuesta || respuesta.ok !== true) {
+            throw new Error(
+                respuesta?.mensaje || "No se pudieron obtener las estadísticas."
+            );
+        }
+
+        const estadisticas = {
+            total: Number(respuesta.totalRegistrados) || 0,
+            pendientes: Number(respuesta.pendientes) || 0,
+            ingresaron: Number(respuesta.ingresaron) || 0,
+            salieron: Number(respuesta.salieron) || 0
+        };
+
+        // Mostrar los valores numéricos.
+        totalElemento.textContent = estadisticas.total;
+        pendientesElemento.textContent = estadisticas.pendientes;
+        ingresaronElemento.textContent = estadisticas.ingresaron;
+        salieronElemento.textContent = estadisticas.salieron;
+
+        // Calcular el porcentaje de participantes que ya ingresaron o salieron.
+        const totalAsistieron =
+            estadisticas.ingresaron + estadisticas.salieron;
+
+        const porcentaje = estadisticas.total > 0
+            ? Math.round((totalAsistieron / estadisticas.total) * 100)
+            : 0;
+
+        porcentajeElemento.textContent = porcentaje + "%";
+
+        // Dibujar el medidor con los tres estados.
+        dibujarMedidorDashboard(estadisticas);
+
+        mostrarMensajeDashboard("");
+
+    } catch (error) {
+        console.error("Error al cargar el dashboard:", error);
+
+        mostrarMensajeDashboard(
+            "No se pudieron cargar las estadísticas. Comprueba tu conexión y vuelve a intentarlo."
+        );
+    }
+}
+
+
+// DIBUJAR EL MEDIDOR SEMICIRCULAR
+
+function dibujarMedidorDashboard(estadisticas) {
+    const segmentoPendiente = document.getElementById("medidor-pendiente");
+    const segmentoIngreso = document.getElementById("medidor-ingreso");
+    const segmentoSalida = document.getElementById("medidor-salida");
+
+    if (!segmentoPendiente || !segmentoIngreso || !segmentoSalida) {
+        console.error("No se encontraron los segmentos del medidor.");
+        return;
+    }
+
+    const total = estadisticas.total;
+
+    if (total <= 0) {
+        segmentoPendiente.setAttribute("d", "");
+        segmentoIngreso.setAttribute("d", "");
+        segmentoSalida.setAttribute("d", "");
+        return;
+    }
+
+    const estados = [
+        {
+            elemento: segmentoPendiente,
+            cantidad: estadisticas.pendientes
+        },
+        {
+            elemento: segmentoIngreso,
+            cantidad: estadisticas.ingresaron
+        },
+        {
+            elemento: segmentoSalida,
+            cantidad: estadisticas.salieron
+        }
+    ];
+
+    let anguloActual = 180;
+
+    estados.forEach((estado) => {
+        const proporcion = estado.cantidad / total;
+        const amplitud = proporcion * 180;
+
+        if (amplitud <= 0) {
+            estado.elemento.setAttribute("d", "");
+            return;
+        }
+
+        const anguloFinal = anguloActual + amplitud;
+
+        const inicio = obtenerPuntoMedidor(anguloActual);
+        const final = obtenerPuntoMedidor(anguloFinal);
+
+        const arcoGrande = amplitud > 180 ? 1 : 0;
+
+        const trayectoria = [
+            "M", inicio.x, inicio.y,
+            "A", 100, 100, 0, arcoGrande, 1,
+            final.x, final.y
+        ].join(" ");
+
+        estado.elemento.setAttribute("d", trayectoria);
+
+        anguloActual = anguloFinal;
+    });
+}
+
+
+// CALCULAR LAS COORDENADAS DEL MEDIDOR
+
+function obtenerPuntoMedidor(angulo) {
+    const radianes = angulo * Math.PI / 180;
+
+    return {
+        x: 130 + 100 * Math.cos(radianes),
+        y: 130 + 100 * Math.sin(radianes)
+    };
+}
+
+
+// MOSTRAR MENSAJES DEL DASHBOARD
+
+function mostrarMensajeDashboard(mensaje) {
+    const grafico = document.querySelector(".dashboard-grafico");
+
+    if (!grafico) return;
+
+    let elemento = document.getElementById("dashboard-mensaje");
+
+    if (!elemento) {
+        elemento = document.createElement("p");
+        elemento.id = "dashboard-mensaje";
+
+        elemento.style.fontSize = "12px";
+        elemento.style.color = "var(--color-texto-secundario)";
+        elemento.style.margin = "0 0 12px";
+
+        const titulo = grafico.querySelector("h4");
+
+        if (titulo) {
+            titulo.insertAdjacentElement("afterend", elemento);
+        } else {
+            grafico.prepend(elemento);
+        }
+    }
+
+    elemento.textContent = mensaje;
+}
+
+
+// ACTUALIZAR SOLO SI EL DASHBOARD ESTÁ ABIERTO
+
+async function actualizarDashboardSiVisible() {
+    const dashboard = document.getElementById("seccion-dashboard");
+
+    if (dashboard && !dashboard.hidden) {
+        await cargarEstadisticasDashboard();
+    }
+}

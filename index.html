@@ -42,6 +42,36 @@
             <p>Selecciona una opción para gestionar el registro del evento.</p>
         </section>
 
+        <!-- ACCESO AL DASHBOARD -->
+        <div class="dashboard-acceso">
+         <button
+           type="button"
+           id="btn-dashboard"
+           class="boton-dashboard"
+           aria-label="Abrir dashboard de asistencia"
+           aria-expanded="false"
+           aria-controls="seccion-dashboard"
+          title="Dashboard de asistencia">
+
+         <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="23"
+            height="23"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true">
+
+            <path d="M3 3v18h18"/>
+            <path d="m19 9-5 5-4-4-5 5"/>
+         </svg>
+
+         </button>
+        </div>
+
         <nav class="navegacion" aria-label="Secciones de asistencia">
             <button class="nav-boton activo" data-seccion="registro"
                 aria-controls="seccion-registro" aria-selected="true">
@@ -61,6 +91,129 @@
                 <span>NUEVO REGISTRO</span>
             </button>
         </nav>
+
+        <!-- SECCIÓN: DASHBOARD DE ASISTENCIA -->
+<section id="seccion-dashboard" class="panel seccion-dashboard" hidden>
+
+    <div class="panel-cabecera">
+        <div>
+            <span class="numero-seccion">RESUMEN GENERAL</span>
+            <h3>Dashboard de asistencia</h3>
+            <p>Estado general de los participantes registrados.</p>
+        </div>
+
+        <div class="icono-panel">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path d="M3 3v18h18"/>
+                <path d="m19 9-5 5-4-4-5 5"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- TOTAL DE PARTICIPANTES -->
+    <div class="dashboard-total">
+        <span>TOTAL DE PARTICIPANTES</span>
+        <strong id="dashboard-total">--</strong>
+    </div>
+
+    <!-- GRÁFICO MEDIDOR -->
+    <div class="dashboard-grafico">
+
+        <h4>Distribución de asistencia</h4>
+
+        <div class="medidor-contenedor">
+
+            <svg
+                id="grafico-medidor"
+                viewBox="0 0 260 155"
+                xmlns="http://www.w3.org/2000/svg">
+
+                <!-- Base del medidor -->
+                <path
+                    class="medidor-fondo"
+                    d="M 30 130 A 100 100 0 0 1 230 130"
+                    fill="none"
+                    stroke-width="18"
+                    stroke-linecap="butt"/>
+
+                <!-- Segmentos de los tres estados -->
+                <path
+                    id="medidor-pendiente"
+                    d="M 30 130 A 100 100 0 0 1 80 43.4"
+                    fill="none"
+                    stroke="#D69E36"
+                    stroke-width="18"
+                    stroke-linecap="butt"/>
+
+                <path
+                    id="medidor-ingreso"
+                    d="M 80 43.4 A 100 100 0 0 1 180 43.4"
+                    fill="none"
+                    stroke="#15966A"
+                    stroke-width="18"
+                    stroke-linecap="butt"/>
+
+                <path
+                    id="medidor-salida"
+                    d="M 180 43.4 A 100 100 0 0 1 230 130"
+                    fill="none"
+                    stroke="#2878C8"
+                    stroke-width="18"
+                    stroke-linecap="butt"/>
+
+            </svg>
+
+            <div class="medidor-centro">
+                <strong id="medidor-porcentaje">--%</strong>
+                <span>Asistencia</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DESGLOSE DE ESTADOS -->
+    <div class="dashboard-estados">
+
+        <h4>Detalle por estado</h4>
+
+        <div class="dashboard-estado pendiente">
+            <div class="estado-informacion">
+                <span class="estado-indicador"></span>
+                <span>Pendientes</span>
+            </div>
+            <strong id="dashboard-pendientes">--</strong>
+        </div>
+
+        <div class="dashboard-estado ingreso">
+            <div class="estado-informacion">
+                <span class="estado-indicador"></span>
+                <span>Ingresaron</span>
+            </div>
+            <strong id="dashboard-ingresaron">--</strong>
+        </div>
+
+        <div class="dashboard-estado salida">
+            <div class="estado-informacion">
+                <span class="estado-indicador"></span>
+                <span>Salieron</span>
+            </div>
+            <strong id="dashboard-salieron">--</strong>
+        </div>
+
+    </div>
+
+</section>
 
         <!-- SECCIÓN 1: BÚSQUEDA -->
         <section id="seccion-registro" class="panel seccion activa">

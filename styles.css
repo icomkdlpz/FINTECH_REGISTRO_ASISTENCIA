@@ -1171,3 +1171,280 @@ input:focus-visible {
         transform: scale(1.08);
     }
 }
+
+
+/* =========================================
+   DASHBOARD DE ASISTENCIA
+========================================= */
+
+/* BOTÓN DE ACCESO AL DASHBOARD */
+
+.dashboard-acceso {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: -8px 0 18px;
+}
+
+.boton-dashboard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 11px;
+
+    background: var(--color-blanco);
+    color: var(--color-principal);
+
+    box-shadow: var(--sombra);
+
+    transition: background 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.boton-dashboard:hover {
+    background: var(--color-principal);
+    color: var(--color-blanco);
+    border-color: var(--color-principal);
+    transform: translateY(-2px);
+}
+
+.boton-dashboard:active {
+    transform: scale(0.96);
+}
+
+.boton-dashboard:focus-visible {
+    outline: 3px solid rgba(19, 132, 154, 0.25);
+    outline-offset: 3px;
+}
+
+
+/* PANEL DEL DASHBOARD */
+
+.seccion-dashboard {
+    margin-bottom: 20px;
+}
+
+.seccion-dashboard[hidden] {
+    display: none !important;
+}
+
+
+/* TOTAL DE PARTICIPANTES */
+
+.dashboard-total {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+
+    padding: 24px 15px;
+    margin-top: 22px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+
+    background: #fbfcfd;
+}
+
+.dashboard-total span {
+    color: var(--color-texto-secundario);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.dashboard-total strong {
+    color: var(--color-principal);
+    font-size: clamp(32px, 6vw, 42px);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+
+/* GRÁFICO MEDIDOR */
+
+.dashboard-grafico {
+    padding: 24px 15px 15px;
+    margin-top: 18px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+
+    background: var(--color-blanco);
+    text-align: center;
+}
+
+.dashboard-grafico h4,
+.dashboard-estados h4 {
+    margin: 0 0 18px;
+
+    color: var(--color-principal);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.medidor-contenedor {
+    position: relative;
+
+    width: 100%;
+    max-width: 340px;
+
+    margin: 0 auto;
+}
+
+#grafico-medidor {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.medidor-fondo {
+    stroke: #e9eef1;
+}
+
+#medidor-pendiente,
+#medidor-ingreso,
+#medidor-salida {
+    transition: stroke-dasharray 0.6s ease,
+                stroke-dashoffset 0.6s ease;
+}
+
+.medidor-centro {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    transform: translateX(-50%);
+}
+
+.medidor-centro strong {
+    color: var(--color-principal);
+    font-size: clamp(25px, 5vw, 32px);
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.medidor-centro span {
+    color: var(--color-texto-secundario);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+
+/* DESGLOSE DE LOS TRES ESTADOS */
+
+.dashboard-estados {
+    padding: 22px;
+    margin-top: 18px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+
+    background: var(--color-blanco);
+}
+
+.dashboard-estados h4 {
+    margin-bottom: 17px;
+}
+
+.dashboard-estado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-height: 52px;
+    padding: 10px 13px;
+
+    border: 1px solid var(--color-borde);
+    border-radius: 9px;
+
+    background: #fbfcfd;
+}
+
+.dashboard-estado + .dashboard-estado {
+    margin-top: 10px;
+}
+
+.estado-informacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--color-texto);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.estado-indicador {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.dashboard-estado strong {
+    color: var(--color-principal);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* COLORES DE LOS ESTADOS */
+
+.dashboard-estado.pendiente .estado-indicador {
+    background: #D69E36;
+}
+
+.dashboard-estado.ingreso .estado-indicador {
+    background: #15966A;
+}
+
+.dashboard-estado.salida .estado-indicador {
+    background: #2878C8;
+}
+
+
+/* ADAPTACIÓN A CELULARES */
+
+@media (max-width: 650px) {
+
+    .dashboard-acceso {
+        margin-top: -5px;
+        margin-bottom: 15px;
+    }
+
+    .boton-dashboard {
+        width: 43px;
+        height: 43px;
+    }
+
+    .dashboard-total {
+        padding: 21px 12px;
+    }
+
+    .dashboard-grafico {
+        padding: 22px 10px 12px;
+    }
+
+    .dashboard-estados {
+        padding: 17px 13px;
+    }
+
+    .dashboard-estado {
+        min-height: 49px;
+        padding: 9px 11px;
+    }
+}
